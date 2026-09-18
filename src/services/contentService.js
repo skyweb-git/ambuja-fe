@@ -69,74 +69,69 @@ export const DEFAULT_CONTENT = {
     items: [
       {
         id: 'ambhuja',
-        title: 'Maytri Ambhuja',
-        tagline: 'Flagship 55-Acre Villa Township',
-        location: 'Sanghi City, Near ORR Exit 11, Hyderabad',
+        title: 'Maytri Ankura',
+        tagline: 'Open Plots',
+        location: 'Maheshwaram, Shamshabad Airport, Hyderabad',
         status: 'Ready for VIP Booking',
-        image: 'https://res.cloudinary.com/s8b4ps7b/image/upload/v1788847939/maytri_ambhuja/gallery/gallery_001.jpg',
+        image: 'https://res.cloudinary.com/s8b4ps7b/image/upload/v1789725505/maytri_ambhuja/gallery/project_img_0.jpg',
         buttonText: 'For More Info',
-        specs: [
-          { label: 'Project Area', value: '55 Acres' },
-          { label: 'Villas', value: '516 Premium Units' },
-          { label: 'Clubhouse', value: '90,000 Sq.Ft' },
-          { label: 'Starting Price', value: '3.2 Cr*' }
-        ],
-        features: ['222 & 300 SQ YDS Triplex Villas', '4.5-Acre Central Park', 'RERA: P02400007647']
+        specs: [],
+        features: []
       },
       {
         id: 'palms',
-        title: 'Sanghi City Palms',
-        tagline: 'Signature Luxury Gated Enclave',
-        location: 'Sanghi City Master Township, Hyderabad',
+        title: 'Maytri Susheela Kuteer',
+        tagline: 'Luxury Flats',
+        location: 'Vanasthalipuram, Injapur, Hyderabad',
         status: 'Phase 1 Fast Selling',
-        image: 'https://res.cloudinary.com/s8b4ps7b/image/upload/v1788847941/maytri_ambhuja/gallery/gallery_002.jpg',
+        image: 'https://res.cloudinary.com/s8b4ps7b/image/upload/v1789728586/maytri_ambhuja/gallery/project_img_1.jpg',
         buttonText: 'For More Info',
-        specs: [
-          { label: 'Project Area', value: '35 Acres' },
-          { label: 'Villas', value: '280 Luxury Villas' },
-          { label: 'Clubhouse', value: '50,000 Sq.Ft' },
-          { label: 'Configuration', value: '4 & 5 BHK Triplex' }
-        ],
-        features: ['Private Temperature Pool', 'Lush Forest Avenues', 'Gated 3-Tier Security']
-      },
-      {
-        id: 'meadows',
-        title: 'Maytri Green Meadows',
-        tagline: 'Eco-Luxury Sustainable Villa Estates',
-        location: 'Growth Corridor, East Hyderabad',
-        status: 'Exclusive Preview',
-        image: 'https://res.cloudinary.com/s8b4ps7b/image/upload/v1788847942/maytri_ambhuja/gallery/gallery_004.jpg',
-        buttonText: 'For More Info',
-        specs: [
-          { label: 'Project Area', value: '40 Acres' },
-          { label: 'Villas', value: '320 Eco Villas' },
-          { label: 'Open Space', value: '60% Greenery' },
-          { label: 'Type', value: 'Contemporary Villas' }
-        ],
-        features: ['Solar Powered Community', 'Organic Orchards', 'Outdoor Amphitheater']
-      },
-      {
-        id: 'grandeur',
-        title: 'Maytri Grandeur Suites',
-        tagline: 'Boutique High-End Township Living',
-        location: 'ORR Connectivity Hub, Hyderabad',
-        status: 'Upcoming Launch',
-        image: 'https://res.cloudinary.com/s8b4ps7b/image/upload/v1788847947/maytri_ambhuja/gallery/gallery_009.jpg',
-        buttonText: 'For More Info',
-        specs: [
-          { label: 'Project Area', value: '20 Acres' },
-          { label: 'Residences', value: 'Executive Suites' },
-          { label: 'Amenities', value: 'Sky Lounge & Spa' },
-          { label: 'Access', value: '2 Mins to ORR' }
-        ],
-        features: ['Infinity Sky Deck', 'Concierge & Valet', 'Smart Home Automation']
+        specs: [],
+        features: []
       }
     ]
   }
 };
 
+const CONTENT_CACHE_KEY = 'maytri_website_content_cache_v2';
+
+// Synchronous cache hydration from localStorage for instant, zero-flicker render
 let cachedContent = null;
+if (typeof window !== 'undefined') {
+  try {
+    const raw = localStorage.getItem(CONTENT_CACHE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        cachedContent = {
+          ...DEFAULT_CONTENT,
+          ...parsed,
+          projectsSection: {
+            ...DEFAULT_CONTENT.projectsSection,
+            ...(parsed.projectsSection || {}),
+            items: (Array.isArray(parsed.projectsSection?.items) && parsed.projectsSection.items.length > 0)
+              ? parsed.projectsSection.items
+              : DEFAULT_CONTENT.projectsSection.items
+          }
+        };
+      }
+    }
+  } catch (e) {
+    console.warn('Error reading content cache from localStorage:', e);
+  }
+}
+
 const listeners = new Set();
+
+function updateAndPersistContent(newContent) {
+  cachedContent = newContent;
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(newContent));
+    } catch (e) {}
+  }
+  listeners.forEach(fn => fn(cachedContent));
+}
 
 let cmsChannel = null;
 try {
@@ -144,18 +139,18 @@ try {
     cmsChannel = new BroadcastChannel('maytri_cms_sync_channel');
     cmsChannel.onmessage = (event) => {
       if (event.data && event.data.type === 'CONTENT_UPDATED' && event.data.content) {
-        cachedContent = {
+        const merged = {
           ...DEFAULT_CONTENT,
           ...event.data.content,
           projectsSection: {
             ...DEFAULT_CONTENT.projectsSection,
             ...(event.data.content.projectsSection || {}),
-            items: (event.data.content.projectsSection?.items && event.data.content.projectsSection.items.length > 0)
+            items: (Array.isArray(event.data.content.projectsSection?.items) && event.data.content.projectsSection.items.length > 0)
               ? event.data.content.projectsSection.items
               : DEFAULT_CONTENT.projectsSection.items
           }
         };
-        listeners.forEach(fn => fn(cachedContent));
+        updateAndPersistContent(merged);
       }
     };
   }
@@ -167,7 +162,7 @@ export async function fetchWebsiteContent() {
     if (!res.ok) throw new Error('API fetch failed');
     const json = await res.json();
     if (json.success && json.data) {
-      cachedContent = {
+      const merged = {
         ...DEFAULT_CONTENT,
         ...json.data,
         hero: { ...DEFAULT_CONTENT.hero, ...(json.data.hero || {}) },
@@ -179,13 +174,13 @@ export async function fetchWebsiteContent() {
         projectsSection: {
           ...DEFAULT_CONTENT.projectsSection,
           ...(json.data.projectsSection || {}),
-          items: (json.data.projectsSection?.items && json.data.projectsSection.items.length > 0)
+          items: (Array.isArray(json.data.projectsSection?.items) && json.data.projectsSection.items.length > 0)
             ? json.data.projectsSection.items
             : DEFAULT_CONTENT.projectsSection.items
         }
       };
-      listeners.forEach(fn => fn(cachedContent));
-      return cachedContent;
+      updateAndPersistContent(merged);
+      return merged;
     }
   } catch (err) {
     // Graceful fallback
