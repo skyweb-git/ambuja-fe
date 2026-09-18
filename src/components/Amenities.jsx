@@ -74,10 +74,12 @@ export default function Amenities() {
               ? ICON_MAP[item.iconName] 
               : (Icons[item.iconName] || Icons.Sparkles);
 
+            const hasValidImage = item.img && !item.img.includes('/images/Icons/') && (item.img.startsWith('http') || item.img.startsWith('data:'));
+
             return (
               <div key={idx} className="amenity-card">
                 <div className="amenity-icon-wrapper">
-                  {item.img && (
+                  {hasValidImage ? (
                     <img
                       src={item.img}
                       alt={`${item.name} amenity at Maytri Ambhuja`}
@@ -86,8 +88,9 @@ export default function Amenities() {
                         e.currentTarget.style.display = 'none';
                       }}
                     />
+                  ) : (
+                    <IconComponent size={24} className="amenity-lucide-icon" strokeWidth={1.8} />
                   )}
-                  <IconComponent size={24} className="amenity-lucide-icon" strokeWidth={1.8} />
                 </div>
                 <h3 className="amenity-name">{item.name}</h3>
                 <span className="amenity-tag">{item.category || 'Amenity'}</span>
