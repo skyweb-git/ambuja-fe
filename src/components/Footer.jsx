@@ -1,19 +1,48 @@
-import React from 'react';
-import { ShieldCheck, Phone, Mail, Globe, ArrowUp } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShieldCheck, Phone, Mail, Globe, ArrowUp, MapPin, Building, ExternalLink, Info } from 'lucide-react';
 import { CLOUDINARY_MEDIA } from '../services/mediaConfig';
 import { useWebsiteContent } from '../services/contentService';
 
 export default function Footer({ onOpenPrivacy }) {
+  const [activeOffice, setActiveOffice] = useState('head');
   const websiteContent = useWebsiteContent();
   const contactData = websiteContent?.contact || {};
   const heroData = websiteContent?.hero || {};
 
   const phone = contactData.phone || '+91 98490 12345';
   const email = contactData.email || contactData.infoEmail || 'sales@ambhujamaytri.in';
-  const rawWebsiteUrl = contactData.websiteUrl || 'https://www.ambhujamaytri.in';
+  const rawWebsiteUrl = contactData.websiteUrl || 'https://www.maytriambhuja.in';
   const websiteUrl = rawWebsiteUrl.startsWith('http') ? rawWebsiteUrl : `https://${rawWebsiteUrl}`;
   const displayWebsite = rawWebsiteUrl.replace(/^https?:\/\//i, '').replace(/\/$/, '');
   const reraNo = heroData.reraNumber || 'P02400007647';
+
+  const siteAddress = contactData.siteAddress || 'Survey no: 156, ORR Exit-11, Pedda Amberpet, Near Sanghi Nagar, Hyderabad - 501511';
+  const headOfficeAddress = 'Old Bata Showroom Building, Vanasthalipuram, Next to Dmart, Hyderabad - 500070';
+
+  const offices = {
+    site: {
+      id: 'site',
+      label: 'Site Office',
+      title: 'Maytri Ambhuja Site Office',
+      address: siteAddress,
+      rating: '4.9',
+      reviewCount: '48',
+      mapEmbedUrl: 'https://maps.google.com/maps?q=17.3006431,78.6548758+(Maytri+Ambhuja+Site+Office)&t=&z=15&ie=UTF8&iwloc=&output=embed',
+      directionsUrl: 'https://maps.google.com/?q=17.3006431,78.6548758'
+    },
+    head: {
+      id: 'head',
+      label: 'Head Office',
+      title: 'Maytri Group Head Office',
+      address: headOfficeAddress,
+      rating: '4.9',
+      reviewCount: '34',
+      mapEmbedUrl: 'https://maps.google.com/maps?q=17.3374612,78.5700071+(Maytri+Group+Head+Office)&t=&z=16&ie=UTF8&iwloc=&output=embed',
+      directionsUrl: 'https://maps.google.com/?q=17.3374612,78.5700071'
+    }
+  };
+
+  const currentOffice = offices[activeOffice] || offices.head;
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -34,6 +63,75 @@ export default function Footer({ onOpenPrivacy }) {
   return (
     <footer className="site-footer" aria-label="Site Footer">
       <div className="footer-main-container">
+        {/* Experience Center Live Maps */}
+        <section id="location" className="footer-experience-center" aria-label="Experience Center and Live Map">
+          <div className="footer-exp-header">
+            <h3 className="footer-exp-title">EXPERIENCE CENTER</h3>
+
+            <div className="footer-exp-toggle-pill" role="tablist" aria-label="Experience Center Office Selection">
+              <button
+                role="tab"
+                aria-selected={activeOffice === 'site'}
+                className={`footer-exp-toggle-btn ${activeOffice === 'site' ? 'active' : ''}`}
+                onClick={() => setActiveOffice('site')}
+              >
+                <MapPin size={14} />
+                <span>Site Office</span>
+              </button>
+              <button
+                role="tab"
+                aria-selected={activeOffice === 'head'}
+                className={`footer-exp-toggle-btn ${activeOffice === 'head' ? 'active' : ''}`}
+                onClick={() => setActiveOffice('head')}
+              >
+                <Building size={14} />
+                <span>Head Office</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="footer-map-container">
+            {/* Floating Office Card */}
+            <div className="footer-map-info-card">
+              <div className="footer-map-card-head">
+                <h4 className="footer-map-card-title">{currentOffice.title}</h4>
+                <a
+                  href={currentOffice.directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-map-card-link"
+                  title="Open in Google Maps"
+                  aria-label={`Get directions to ${currentOffice.title}`}
+                >
+                  <ExternalLink size={14} />
+                </a>
+              </div>
+
+              <p className="footer-map-card-address">{currentOffice.address}</p>
+
+              <div className="footer-map-card-rating">
+                <span className="footer-map-rating-score">{currentOffice.rating}</span>
+                <span className="footer-map-rating-star">★</span>
+                <span className="footer-map-review-count">({currentOffice.reviewCount})</span>
+                <span className="footer-map-info-btn" title="Google Maps Verified Reviews">
+                  <Info size={12} />
+                </span>
+              </div>
+            </div>
+
+            {/* Google Maps Live Interactive Embed */}
+            <iframe
+              key={currentOffice.id}
+              title={`${currentOffice.title} Location Map`}
+              src={currentOffice.mapEmbedUrl}
+              className="footer-map-iframe"
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        </section>
+
         <div className="footer-grid">
           {/* Column 1: Brand & RERA */}
           <div className="footer-brand-col">
