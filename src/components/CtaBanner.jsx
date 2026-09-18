@@ -10,14 +10,16 @@ export default function CtaBanner() {
       <div className="cta-banner">
         {/* Background video */}
         <video
-          src={media.ctaVideo || CLOUDINARY_MEDIA.ctaVideo}
           poster={media.ctaPoster || CLOUDINARY_MEDIA.ctaPoster}
           autoPlay
           loop
           muted
           playsInline
+          preload="metadata"
           className="cta-banner__bg"
-        />
+        >
+          <source src={media.ctaVideo || CLOUDINARY_MEDIA.ctaVideo} type="video/mp4" />
+        </video>
         {/* Dark navy overlay */}
         <div className="cta-banner__overlay" />
 

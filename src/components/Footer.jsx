@@ -28,7 +28,8 @@ export default function Footer({ onOpenPrivacy }) {
       address: siteAddress,
       rating: '4.9',
       reviewCount: '48',
-      mapEmbedUrl: 'https://maps.google.com/maps?q=17.3006431,78.6548758+(Maytri+Ambhuja+Site+Office)&t=&z=15&ie=UTF8&iwloc=&output=embed'
+      mapEmbedUrl: 'https://maps.google.com/maps?q=17.3006431,78.6548758+(Maytri+Ambhuja+Site+Office)&t=&z=15&ie=UTF8&iwloc=&output=embed',
+      directionsUrl: 'https://maps.google.com/?q=17.3006431,78.6548758'
     },
     head: {
       id: 'head',
@@ -37,9 +38,12 @@ export default function Footer({ onOpenPrivacy }) {
       address: headOfficeAddress,
       rating: '4.8',
       reviewCount: '124',
-      mapEmbedUrl: 'https://maps.google.com/maps?q=17.3315,78.5606+(Maytri+Group+Head+Office)&t=&z=15&ie=UTF8&iwloc=&output=embed'
+      mapEmbedUrl: 'https://maps.google.com/maps?q=17.3315,78.5606+(Maytri+Group+Head+Office)&t=&z=15&ie=UTF8&iwloc=&output=embed',
+      directionsUrl: 'https://maps.google.com/?q=17.3315,78.5606'
     }
   };
+
+  const currentOffice = offices[activeOffice] || offices.head;
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

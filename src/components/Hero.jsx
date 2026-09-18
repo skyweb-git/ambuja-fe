@@ -72,17 +72,19 @@ export default function Hero({ onOpenBookVisit }) {
         <video
           ref={videoRef}
           className={`hero-media-bg ${isVideoLoaded ? 'hero-media-bg--loaded' : 'hero-media-bg--loading'}`}
-          src={videoUrl}
           poster={posterUrl}
           autoPlay
           loop
           muted
           playsInline
+          preload="metadata"
           onPlay={() => setIsVideoLoaded(true)}
           onPlaying={() => setIsVideoLoaded(true)}
           onCanPlay={() => setIsVideoLoaded(true)}
           onLoadedData={() => setIsVideoLoaded(true)}
-        />
+        >
+          <source src={videoUrl} type="video/mp4" />
+        </video>
         <div className="hero-media-overlay" />
       </div>
 
