@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Layers, Maximize2, FileText, ArrowUpRight, Compass, Building, Sparkles, Home } from 'lucide-react';
-import { CLOUDINARY_MEDIA } from '../services/mediaConfig';
+import { CLOUDINARY_MEDIA, useWebsiteMedia } from '../services/mediaConfig';
 
 export default function FloorPlans({ onOpenEnquiry, onOpenLightbox }) {
+  const media = useWebsiteMedia();
   const [selectedConfig, setSelectedConfig] = useState('222-east');
   const [activeFloorTab, setActiveFloorTab] = useState('ground');
 
@@ -21,21 +22,21 @@ export default function FloorPlans({ onOpenEnquiry, onOpenLightbox }) {
           id: 'ground',
           name: 'Ground Floor Plan',
           area: '1397.37 SFT',
-          img: CLOUDINARY_MEDIA.floorplans?.east222Ground || '/floorplans/222east_ground.webp',
+          img: media.floorplans?.east222Ground || CLOUDINARY_MEDIA.floorplans?.east222Ground || '/floorplans/222east_ground.webp',
           alt: 'Maytri Ambhuja 222 SQ Yards East Facing Ground Floor Plan'
         },
         {
           id: 'first',
           name: 'First Floor Plan',
           area: '1397.371 SFT',
-          img: CLOUDINARY_MEDIA.floorplans?.east222First || '/floorplans/222east_first.webp',
+          img: media.floorplans?.east222First || CLOUDINARY_MEDIA.floorplans?.east222First || '/floorplans/222east_first.webp',
           alt: 'Maytri Ambhuja 222 SQ Yards East Facing First Floor Plan'
         },
         {
           id: 'terrace',
           name: 'Terrace Floor Plan',
           area: '561.55 SFT',
-          img: CLOUDINARY_MEDIA.floorplans?.east222Terrace || '/floorplans/222east_terrace.webp',
+          img: media.floorplans?.east222Terrace || CLOUDINARY_MEDIA.floorplans?.east222Terrace || '/floorplans/222east_terrace.webp',
           alt: 'Maytri Ambhuja 222 SQ Yards East Facing Terrace Floor Plan'
         }
       ]
@@ -54,21 +55,21 @@ export default function FloorPlans({ onOpenEnquiry, onOpenLightbox }) {
           id: 'ground',
           name: 'Ground Floor Plan',
           area: '1397.37 SFT',
-          img: CLOUDINARY_MEDIA.floorplans?.west222Ground || '/floorplans/222west_ground.jpg',
+          img: media.floorplans?.west222Ground || CLOUDINARY_MEDIA.floorplans?.west222Ground || '/floorplans/222west_ground.jpg',
           alt: 'Maytri Ambhuja 222 SQ Yards West Facing Ground Floor Plan'
         },
         {
           id: 'first',
           name: 'First Floor Plan',
           area: '1397.371 SFT',
-          img: CLOUDINARY_MEDIA.floorplans?.west222First || '/floorplans/222west_first.jpg',
+          img: media.floorplans?.west222First || CLOUDINARY_MEDIA.floorplans?.west222First || '/floorplans/222west_first.jpg',
           alt: 'Maytri Ambhuja 222 SQ Yards West Facing First Floor Plan'
         },
         {
           id: 'terrace',
           name: 'Terrace Floor Plan',
           area: '561.55 SFT',
-          img: CLOUDINARY_MEDIA.floorplans?.west222Terrace || '/floorplans/222west_terrace.jpg',
+          img: media.floorplans?.west222Terrace || CLOUDINARY_MEDIA.floorplans?.west222Terrace || '/floorplans/222west_terrace.jpg',
           alt: 'Maytri Ambhuja 222 SQ Yards West Facing Terrace Floor Plan'
         }
       ]
@@ -87,21 +88,21 @@ export default function FloorPlans({ onOpenEnquiry, onOpenLightbox }) {
           id: 'ground',
           name: 'Ground Floor Plan',
           area: '1850.50 SFT',
-          img: CLOUDINARY_MEDIA.floorplans?.east300Ground || '/floorplans/300east_ground.jpg',
+          img: media.floorplans?.east300Ground || CLOUDINARY_MEDIA.floorplans?.east300Ground || '/floorplans/300east_ground.jpg',
           alt: 'Maytri Ambhuja 300 SQ Yards East Facing Ground Floor Plan'
         },
         {
           id: 'first',
           name: 'First Floor Plan',
           area: '1850.50 SFT',
-          img: CLOUDINARY_MEDIA.floorplans?.east300First || '/floorplans/300east_first.jpg',
+          img: media.floorplans?.east300First || CLOUDINARY_MEDIA.floorplans?.east300First || '/floorplans/300east_first.jpg',
           alt: 'Maytri Ambhuja 300 SQ Yards East Facing First Floor Plan'
         },
         {
           id: 'terrace',
           name: 'Terrace Floor Plan',
           area: '820.00 SFT',
-          img: CLOUDINARY_MEDIA.floorplans?.east300Terrace || '/floorplans/300east_terrace.jpg',
+          img: media.floorplans?.east300Terrace || CLOUDINARY_MEDIA.floorplans?.east300Terrace || '/floorplans/300east_terrace.jpg',
           alt: 'Maytri Ambhuja 300 SQ Yards East Facing Terrace Floor Plan'
         }
       ]
@@ -120,21 +121,21 @@ export default function FloorPlans({ onOpenEnquiry, onOpenLightbox }) {
           id: 'ground',
           name: 'Ground Floor Plan',
           area: '1850.50 SFT',
-          img: CLOUDINARY_MEDIA.floorplans?.west300Ground || '/floorplans/300west_ground.jpg',
+          img: media.floorplans?.west300Ground || CLOUDINARY_MEDIA.floorplans?.west300Ground || '/floorplans/300west_ground.jpg',
           alt: 'Maytri Ambhuja 300 SQ Yards West Facing Ground Floor Plan'
         },
         {
           id: 'first',
           name: 'First Floor Plan',
           area: '1850.50 SFT',
-          img: CLOUDINARY_MEDIA.floorplans?.west300First || '/floorplans/300west_first.jpg',
+          img: media.floorplans?.west300First || CLOUDINARY_MEDIA.floorplans?.west300First || '/floorplans/300west_first.jpg',
           alt: 'Maytri Ambhuja 300 SQ Yards West Facing First Floor Plan'
         },
         {
           id: 'terrace',
           name: 'Terrace Floor Plan',
           area: '820.00 SFT',
-          img: CLOUDINARY_MEDIA.floorplans?.west300Terrace || '/floorplans/300west_terrace.jpg',
+          img: media.floorplans?.west300Terrace || CLOUDINARY_MEDIA.floorplans?.west300Terrace || '/floorplans/300west_terrace.jpg',
           alt: 'Maytri Ambhuja 300 SQ Yards West Facing Terrace Floor Plan'
         }
       ]
@@ -162,49 +163,49 @@ export default function FloorPlans({ onOpenEnquiry, onOpenLightbox }) {
           id: 'front_panorama',
           name: 'Grand Pool & Deck',
           area: '90,000 SFT Grand Facade',
-          img: CLOUDINARY_MEDIA.clubhouse?.frontPanorama || '/clubhouse/clubhouse_front_panorama.webp',
+          img: media.clubhouse?.frontPanorama || CLOUDINARY_MEDIA.clubhouse?.frontPanorama || '/clubhouse/clubhouse_front_panorama.webp',
           alt: '90,000 SFT Club House Grand Facade & Swimming Pool'
         },
         {
           id: 'pool_aerial',
           name: 'Aerial Pool View',
           area: 'Olympic Pool Deck & Cabanas',
-          img: CLOUDINARY_MEDIA.clubhouse?.poolAerial || '/clubhouse/clubhouse_pool_aerial.webp',
+          img: media.clubhouse?.poolAerial || CLOUDINARY_MEDIA.clubhouse?.poolAerial || '/clubhouse/clubhouse_pool_aerial.webp',
           alt: 'Club House Grand Swimming Pool & Sun Deck View'
         },
         {
           id: 'evening_elevation',
           name: 'Evening Elevation',
           area: 'Night Reflection View',
-          img: CLOUDINARY_MEDIA.clubhouse?.eveningElevation || '/clubhouse/clubhouse_evening_elevation.webp',
+          img: media.clubhouse?.eveningElevation || CLOUDINARY_MEDIA.clubhouse?.eveningElevation || '/clubhouse/clubhouse_evening_elevation.webp',
           alt: 'Club House Evening Illumination & Poolside'
         },
         {
           id: 'courtyard_lawn',
           name: 'Courtyard & Lawn',
           area: '4.5 Acres Central Park Lawn',
-          img: CLOUDINARY_MEDIA.clubhouse?.courtyardLawn || '/clubhouse/clubhouse_courtyard_lawn.webp',
+          img: media.clubhouse?.courtyardLawn || CLOUDINARY_MEDIA.clubhouse?.courtyardLawn || '/clubhouse/clubhouse_courtyard_lawn.webp',
           alt: 'Club House Landscaped Courtyard & Central Lawn'
         },
         {
           id: 'elevation_pool',
           name: 'Resort Swimming Pool',
           area: 'Tropical Pool Deck',
-          img: CLOUDINARY_MEDIA.elevations?.pool || '/elevations/elevation_pool.webp',
+          img: media.elevations?.pool || CLOUDINARY_MEDIA.elevations?.pool || '/elevations/elevation_pool.webp',
           alt: 'Clubhouse Resort Swimming Pool & Deck'
         },
         {
           id: 'elevation_cricket',
           name: 'Cricket Pitch Arena',
           area: 'Professional Sports Arena',
-          img: CLOUDINARY_MEDIA.elevations?.cricketPitch || '/elevations/elevation_cricket_pitch.webp',
+          img: media.elevations?.cricketPitch || CLOUDINARY_MEDIA.elevations?.cricketPitch || '/elevations/elevation_cricket_pitch.webp',
           alt: 'Professional Cricket Pitch & Outdoor Sports Arena'
         },
         {
           id: 'elevation_park',
           name: '4.5 Acres Central Park',
           area: 'Central Park Day View',
-          img: CLOUDINARY_MEDIA.elevations?.parkDay || '/elevations/elevation_park_day.webp',
+          img: media.elevations?.parkDay || CLOUDINARY_MEDIA.elevations?.parkDay || '/elevations/elevation_park_day.webp',
           alt: '4.5 Acres Central Park & Landscaped Promenade'
         }
       ]

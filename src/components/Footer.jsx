@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { ShieldCheck, Phone, Mail, Globe, ArrowUp, MapPin, Building, ExternalLink, Info } from 'lucide-react';
-import { CLOUDINARY_MEDIA } from '../services/mediaConfig';
+import { CLOUDINARY_MEDIA, useWebsiteMedia } from '../services/mediaConfig';
 import { useWebsiteContent } from '../services/contentService';
 
 export default function Footer({ onOpenPrivacy }) {
   const [activeOffice, setActiveOffice] = useState('head');
+  const media = useWebsiteMedia();
   const websiteContent = useWebsiteContent();
   const contactData = websiteContent?.contact || {};
   const heroData = websiteContent?.hero || {};
@@ -27,22 +28,18 @@ export default function Footer({ onOpenPrivacy }) {
       address: siteAddress,
       rating: '4.9',
       reviewCount: '48',
-      mapEmbedUrl: 'https://maps.google.com/maps?q=17.3006431,78.6548758+(Maytri+Ambhuja+Site+Office)&t=&z=15&ie=UTF8&iwloc=&output=embed',
-      directionsUrl: 'https://maps.google.com/?q=17.3006431,78.6548758'
+      mapEmbedUrl: 'https://maps.google.com/maps?q=17.3006431,78.6548758+(Maytri+Ambhuja+Site+Office)&t=&z=15&ie=UTF8&iwloc=&output=embed'
     },
     head: {
       id: 'head',
-      label: 'Head Office',
-      title: 'Maytri Group Head Office',
+      label: 'Corporate Office',
+      title: 'Maytri Group Corporate Office',
       address: headOfficeAddress,
-      rating: '4.9',
-      reviewCount: '34',
-      mapEmbedUrl: 'https://maps.google.com/maps?q=17.3374612,78.5700071+(Maytri+Group+Head+Office)&t=&z=16&ie=UTF8&iwloc=&output=embed',
-      directionsUrl: 'https://maps.google.com/?q=17.3374612,78.5700071'
+      rating: '4.8',
+      reviewCount: '124',
+      mapEmbedUrl: 'https://maps.google.com/maps?q=17.3315,78.5606+(Maytri+Group+Head+Office)&t=&z=15&ie=UTF8&iwloc=&output=embed'
     }
   };
-
-  const currentOffice = offices[activeOffice] || offices.head;
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -138,7 +135,7 @@ export default function Footer({ onOpenPrivacy }) {
             <div className="footer-brand-logos">
               <a href="#home" title="Maytri Ambhuja">
                 <img
-                  src={CLOUDINARY_MEDIA.logo}
+                  src={media.logo || CLOUDINARY_MEDIA.logo}
                   alt="Maytri Ambhuja Logo"
                   className="footer-logo-img"
                 />
@@ -146,7 +143,7 @@ export default function Footer({ onOpenPrivacy }) {
               <div className="footer-brand-divider" aria-hidden="true" />
               <a href="#home" title="Sanghi City">
                 <img
-                  src={CLOUDINARY_MEDIA.sanghiLogo || '/sanghicity-logo.png'}
+                  src={media.sanghiLogo || '/sanghicity-logo.png'}
                   alt="Sanghi City Logo"
                   className="footer-secondary-logo-img"
                 />

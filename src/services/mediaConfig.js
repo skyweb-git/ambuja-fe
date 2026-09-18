@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 // Cloudinary Media Configuration & Dynamic Cloud Fetcher
 // Connected to Cloudinary Cloud: s8b4ps7b
 
@@ -155,20 +157,180 @@ export const CLOUDINARY_MEDIA = {
   ]
 };
 
-// Function to dynamically fetch updated Cloudinary media from Backend API (if online)
-export async function getDynamicCloudMedia() {
+// API Key to nested path mapping for reactive updates
+export const API_KEY_TO_NESTED_PATH = {
+  // Brand & Logos
+  logo: ['logo'],
+  brandLogo: ['logo'],
+  sanghiLogo: ['sanghiLogo'],
+  ambhujaLogo: ['sanghiLogo'],
+  heroPoster: ['heroPoster'],
+  heroBgImage: ['heroBgImage'],
+  heroVideo: ['heroVideo'],
+  ctaPoster: ['ctaPoster'],
+  ctaBgImage: ['ctaBgImage'],
+  ctaVideo: ['ctaVideo'],
+
+  // Clubhouse (both snake_case and camelCase keys)
+  clubhouse_front_panorama: ['clubhouse', 'frontPanorama'],
+  frontPanorama: ['clubhouse', 'frontPanorama'],
+  clubhouse_pool_aerial: ['clubhouse', 'poolAerial'],
+  poolAerial: ['clubhouse', 'poolAerial'],
+  clubhouse_evening_elevation: ['clubhouse', 'eveningElevation'],
+  eveningElevation: ['clubhouse', 'eveningElevation'],
+  clubhouse_courtyard_lawn: ['clubhouse', 'courtyardLawn'],
+  courtyardLawn: ['clubhouse', 'courtyardLawn'],
+
+  // Elevations (both snake_case and camelCase keys)
+  elevation_01: ['elevations', 'elevation01'],
+  elevation01: ['elevations', 'elevation01'],
+  elevation_02: ['elevations', 'elevation02'],
+  elevation02: ['elevations', 'elevation02'],
+  elevation_03: ['elevations', 'elevation03'],
+  elevation03: ['elevations', 'elevation03'],
+  elevation_04: ['elevations', 'elevation04'],
+  elevation04: ['elevations', 'elevation04'],
+  elevation_05: ['elevations', 'elevation05'],
+  elevation05: ['elevations', 'elevation05'],
+  elevation_06: ['elevations', 'elevation06'],
+  elevation06: ['elevations', 'elevation06'],
+  elevation_07: ['elevations', 'elevation07'],
+  elevation07: ['elevations', 'elevation07'],
+  elevation_pool: ['elevations', 'pool'],
+  pool: ['elevations', 'pool'],
+  elevation_cricket_pitch: ['elevations', 'cricketPitch'],
+  cricketPitch: ['elevations', 'cricketPitch'],
+  elevation_park_day: ['elevations', 'parkDay'],
+  parkDay: ['elevations', 'parkDay'],
+
+  // Floor Plans (both snake_case and camelCase keys)
+  floorplan_222_east_ground: ['floorplans', 'east222Ground'],
+  east222Ground: ['floorplans', 'east222Ground'],
+  floorplan_222_east_first: ['floorplans', 'east222First'],
+  east222First: ['floorplans', 'east222First'],
+  floorplan_222_east_terrace: ['floorplans', 'east222Terrace'],
+  east222Terrace: ['floorplans', 'east222Terrace'],
+
+  floorplan_222_west_ground: ['floorplans', 'west222Ground'],
+  west222Ground: ['floorplans', 'west222Ground'],
+  floorplan_222_west_first: ['floorplans', 'west222First'],
+  west222First: ['floorplans', 'west222First'],
+  floorplan_222_west_terrace: ['floorplans', 'west222Terrace'],
+  west222Terrace: ['floorplans', 'west222Terrace'],
+
+  floorplan_300_east_ground: ['floorplans', 'east300Ground'],
+  east300Ground: ['floorplans', 'east300Ground'],
+  floorplan_300_east_first: ['floorplans', 'east300First'],
+  east300First: ['floorplans', 'east300First'],
+  floorplan_300_east_terrace: ['floorplans', 'east300Terrace'],
+  east300Terrace: ['floorplans', 'east300Terrace'],
+
+  floorplan_300_west_ground: ['floorplans', 'west300Ground'],
+  west300Ground: ['floorplans', 'west300Ground'],
+  floorplan_300_west_first: ['floorplans', 'west300First'],
+  west300First: ['floorplans', 'west300First'],
+  floorplan_300_west_terrace: ['floorplans', 'west300Terrace'],
+  west300Terrace: ['floorplans', 'west300Terrace'],
+};
+
+// Dynamic Media Cache and Real-Time Cross-Tab Synchronization
+const MEDIA_CACHE_KEY = 'maytri_website_media_cache_v2';
+
+function applyMapToMedia(target, map) {
+  if (!map || typeof map !== 'object') return;
+  for (const [apiKey, url] of Object.entries(map)) {
+    const path = API_KEY_TO_NESTED_PATH[apiKey];
+    if (path && path.length === 1) {
+      target[path[0]] = url;
+    } else if (path && path.length === 2) {
+      if (target[path[0]] && typeof target[path[0]] === 'object' && !Array.isArray(target[path[0]])) {
+        target[path[0]][path[1]] = url;
+      }
+    } else {
+      target[apiKey] = url;
+    }
+  }
+}
+
+function getInitialCachedMedia() {
   try {
-    const res = await fetch(`${API_BASE_URL}/media`);
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(MEDIA_CACHE_KEY);
+      if (stored) {
+        const map = JSON.parse(stored);
+        const merged = JSON.parse(JSON.stringify(CLOUDINARY_MEDIA));
+        applyMapToMedia(merged, map);
+        applyMapToMedia(CLOUDINARY_MEDIA, map);
+        return merged;
+      }
+    }
+  } catch (e) {
+    console.warn('Error reading media cache:', e);
+  }
+  return null;
+}
+
+let cachedMedia = getInitialCachedMedia();
+const mediaListeners = new Set();
+let cmsMediaChannel = null;
+
+try {
+  if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+    cmsMediaChannel = new BroadcastChannel('maytri_cms_sync_channel');
+    cmsMediaChannel.onmessage = (event) => {
+      if (event.data?.type === 'MEDIA_UPDATED' || event.data?.type === 'CONTENT_UPDATED') {
+        fetchWebsiteMedia();
+      }
+    };
+  }
+} catch (e) {
+  console.warn('BroadcastChannel not supported', e);
+}
+
+export async function fetchWebsiteMedia() {
+  try {
+    const baseUrl = getApiBaseUrl();
+    const res = await fetch(`${baseUrl}/media`);
     if (!res.ok) throw new Error('API fetch failed');
     const json = await res.json();
     if (json.success && json.map) {
-      return {
-        ...CLOUDINARY_MEDIA,
-        ...json.map,
-      };
+      const merged = JSON.parse(JSON.stringify(CLOUDINARY_MEDIA));
+      applyMapToMedia(merged, json.map);
+      applyMapToMedia(CLOUDINARY_MEDIA, json.map);
+
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(MEDIA_CACHE_KEY, JSON.stringify(json.map));
+        }
+      } catch (e) {}
+
+      cachedMedia = merged;
+      mediaListeners.forEach((fn) => fn(cachedMedia));
+      return cachedMedia;
     }
   } catch (err) {
-    // Graceful fallback to static Cloudinary CDN mappings
+    console.warn('Dynamic media fetch fallback to static:', err.message);
   }
-  return CLOUDINARY_MEDIA;
+  return cachedMedia || CLOUDINARY_MEDIA;
+}
+
+export async function getDynamicCloudMedia() {
+  return fetchWebsiteMedia();
+}
+
+export function useWebsiteMedia() {
+  const [media, setMedia] = useState(() => cachedMedia || getInitialCachedMedia() || CLOUDINARY_MEDIA);
+
+  useEffect(() => {
+    const listener = (newMedia) => setMedia(newMedia);
+    mediaListeners.add(listener);
+
+    fetchWebsiteMedia();
+
+    return () => {
+      mediaListeners.delete(listener);
+    };
+  }, []);
+
+  return media;
 }
