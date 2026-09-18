@@ -10,6 +10,12 @@ export const getApiBaseUrl = () => {
     const clean = envUrl.replace(/\/+$/, '');
     return clean.endsWith('/api') ? clean : `${clean}/api`;
   }
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:5000/api';
+    }
+  }
   return 'https://api.maytriambhuja.in/api';
 };
 
